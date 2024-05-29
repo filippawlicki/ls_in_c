@@ -1,0 +1,20 @@
+# Ignore object files
+*.o
+
+# Ignore executable files
+*.out
+*.exe
+
+# Ignore the build directory
+/build/
+
+# Ignore CLion IDE files
+.idea/
+
+# Ignore cmake files
+cmake-build-debug/
+
+# Ignore other temporary or non-source files
+*.log
+*.tmp
+*.core
