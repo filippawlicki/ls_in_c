@@ -53,7 +53,11 @@ void print_file_details(char *filename) {
   time_str[strlen(time_str)-1] = '\0'; // remove trailing newline
   printf(" %s ",time_str);
 
-  print_name(filename, 'f');
+  if(S_ISDIR(fileStat.st_mode)) {
+    print_name(filename, 'd');
+  } else {
+    print_name(filename, 'f');
+  }
 
   printf("\n");
 }
