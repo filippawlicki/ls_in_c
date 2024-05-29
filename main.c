@@ -160,7 +160,12 @@ int main( int argc, char *argv[] ) {
         abort ();
     }
 
-  list_directory(".", lflag, Rflag, sflag, aflag, iflag);
+  char* dir_path = ".";
+  if (optind < argc) {
+    dir_path = argv[optind];
+  }
+
+  list_directory(dir_path, lflag, Rflag, sflag, aflag, iflag);
 
   return 0;
 }
