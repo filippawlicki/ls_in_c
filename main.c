@@ -10,6 +10,18 @@
 #include <pwd.h>
 #include <grp.h>
 
+void print_name(char *filename, char type) {
+  if(type == 'd') {
+    printf("\033[0;32;44m"); // Set the text color to blue on green background
+  } else {
+    printf("\033[0;32m"); // Set the text color to green
+  }
+
+  printf("%s", filename);
+
+  printf("\033[0m"); // Reset the text color to white
+}
+
 void print_file_details(char *filename) {
   struct stat fileStat;
   if(stat(filename,&fileStat) < 0)
@@ -39,9 +51,11 @@ void print_file_details(char *filename) {
 
   char* time_str = ctime(&fileStat.st_mtime);
   time_str[strlen(time_str)-1] = '\0'; // remove trailing newline
-  printf(" %s",time_str);
+  printf(" %s ",time_str);
 
-  printf(" %s\n",filename);
+  print_name(filename, 'f');
+
+  printf("\n");
 }
 
 void list_directory(char *dir_path, int lflag, int Rflag) {
@@ -65,7 +79,12 @@ void list_directory(char *dir_path, int lflag, int Rflag) {
       if(lflag) {
         print_file_details(pDirEnt->d_name);
       } else {
-        printf( "%s  ", pDirEnt->d_name );
+        char fileType = 'f';
+        if(pDirEnt->d_type == DT_DIR) {
+          fileType = 'd';
+        }
+        print_name(pDirEnt->d_name, fileType);
+        printf("  ");
       }
 
       if(Rflag && pDirEnt->d_type == DT_DIR) {
