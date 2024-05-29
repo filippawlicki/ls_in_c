@@ -22,10 +22,14 @@ void print_name(char *filename, char type) {
   printf("\033[0m"); // Reset the text color to white
 }
 
-void print_file_details(char *filename) {
+void print_file_details(char *filename, int iflag) {
   struct stat fileStat;
   if(stat(filename,&fileStat) < 0)
     return;
+
+  if(iflag) {
+    printf("%ld ",fileStat.st_ino); // Display inode number
+  }
 
   struct passwd *pw = getpwuid(fileStat.st_uid);
   struct group  *gr = getgrgid(fileStat.st_gid);
@@ -62,7 +66,7 @@ void print_file_details(char *filename) {
   printf("\n");
 }
 
-void list_directory(char *dir_path, int lflag, int Rflag, int sflag, int aflag) {
+void list_directory(char *dir_path, int lflag, int Rflag, int sflag, int aflag, int iflag) {
   DIR *pDIR;
   struct dirent *pDirEnt;
   struct stat fileStat;
@@ -92,8 +96,11 @@ void list_directory(char *dir_path, int lflag, int Rflag, int sflag, int aflag) 
         totalSize += fileStat.st_size;
 
         if(lflag) {
-          print_file_details(fullPath);
+          print_file_details(fullPath, iflag);
         } else {
+          if(iflag) {
+            printf("%ld ", fileStat.st_ino); // Print the inode number
+          }
           char fileType = 'f';
           if(pDirEnt->d_type == DT_DIR) {
             fileType = 'd';
@@ -107,7 +114,7 @@ void list_directory(char *dir_path, int lflag, int Rflag, int sflag, int aflag) 
 
         if(Rflag && pDirEnt->d_type == DT_DIR) {
           printf("\n");
-          list_directory(fullPath, lflag, Rflag, sflag, aflag);
+          list_directory(fullPath, lflag, Rflag, sflag, aflag, iflag);
         }
       }
     }
@@ -129,8 +136,9 @@ int main( int argc, char *argv[] ) {
   int Rflag = 0;
   int sflag = 0;
   int aflag = 0;
+  int iflag = 0;
 
-  while ((c = getopt (argc, argv, "lRsa")) != -1)
+  while ((c = getopt (argc, argv, "lRsai")) != -1)
     switch (c)
     {
       case 'l':
@@ -145,11 +153,14 @@ int main( int argc, char *argv[] ) {
       case 'a':
         aflag = 1;
         break;
+      case 'i':
+        iflag = 1;
+        break;
       default:
         abort ();
     }
 
-  list_directory(".", lflag, Rflag, sflag, aflag);
+  list_directory(".", lflag, Rflag, sflag, aflag, iflag);
 
   return 0;
 }
