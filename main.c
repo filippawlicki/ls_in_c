@@ -44,37 +44,65 @@ void print_file_details(char *filename) {
   printf(" %s\n",filename);
 }
 
-int main( int argc, char *argv[] ) {
+void list_directory(char *dir_path, int lflag, int Rflag) {
   DIR *pDIR;
   struct dirent *pDirEnt;
-  int c;
-  int lflag = 0;
 
-  while ((c = getopt (argc, argv, "l")) != -1)
-    switch (c)
-    {
-      case 'l':
-        lflag = 1;
-        break;
-      default:
-        abort ();
-    }
-
-  pDIR = opendir(".");
+  pDIR = opendir(dir_path);
   if ( pDIR == NULL ) {
     fprintf( stderr, "%s %d: opendir() failed (%s)\n",
              __FILE__, __LINE__, strerror( errno ));
     exit( -1 );
   }
+
+  if(Rflag) {
+    printf("%s:\n", dir_path);
+  }
+
   pDirEnt = readdir( pDIR );
   while ( pDirEnt != NULL ) {
-    if(lflag) {
-      print_file_details(pDirEnt->d_name);
-    } else {
-      printf( "%s\n", pDirEnt->d_name );
+    if(strcmp(pDirEnt->d_name, ".") != 0 && strcmp(pDirEnt->d_name, "..") != 0) {
+      if(lflag) {
+        print_file_details(pDirEnt->d_name);
+      } else {
+        printf( "%s  ", pDirEnt->d_name );
+      }
+
+      if(Rflag && pDirEnt->d_type == DT_DIR) {
+        char path[1024];
+        snprintf(path, sizeof(path), "%s/%s", dir_path, pDirEnt->d_name);
+        printf("\n");
+        list_directory(path, lflag, Rflag);
+      }
     }
+
     pDirEnt = readdir( pDIR );
   }
   closedir( pDIR );
+  if(!Rflag) {
+    printf("\n");
+  }
+}
+
+int main( int argc, char *argv[] ) {
+  int c;
+  int lflag = 0;
+  int Rflag = 0;
+
+  while ((c = getopt (argc, argv, "lR")) != -1)
+    switch (c)
+    {
+      case 'l':
+        lflag = 1;
+        break;
+      case 'R':
+        Rflag = 1;
+        break;
+      default:
+        abort ();
+    }
+
+  list_directory(".", lflag, Rflag);
+
   return 0;
 }
