@@ -1,3 +1,0 @@
-C:/Users/ProFi/Desktop/Repos/ls_in_c/cmake-build-debug/CMakeFiles/ls_in_c.dir
-C:/Users/ProFi/Desktop/Repos/ls_in_c/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/ProFi/Desktop/Repos/ls_in_c/cmake-build-debug/CMakeFiles/rebuild_cache.dir
