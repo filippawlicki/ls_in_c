@@ -62,7 +62,7 @@ void print_file_details(char *filename) {
   printf("\n");
 }
 
-void list_directory(char *dir_path, int lflag, int Rflag, int sflag) {
+void list_directory(char *dir_path, int lflag, int Rflag, int sflag, int aflag) {
   DIR *pDIR;
   struct dirent *pDirEnt;
   struct stat fileStat;
@@ -81,32 +81,34 @@ void list_directory(char *dir_path, int lflag, int Rflag, int sflag) {
 
   pDirEnt = readdir( pDIR );
   while ( pDirEnt != NULL ) {
-    if(strcmp(pDirEnt->d_name, ".") != 0 && strcmp(pDirEnt->d_name, "..") != 0) {
-      char fullPath[1024];
-      snprintf(fullPath, sizeof(fullPath), "%s/%s", dir_path, pDirEnt->d_name);
+    if(aflag || pDirEnt->d_name[0] != '.') {
+      if(strcmp(pDirEnt->d_name, ".") != 0 && strcmp(pDirEnt->d_name, "..") != 0) {
+        char fullPath[1024];
+        snprintf(fullPath, sizeof(fullPath), "%s/%s", dir_path, pDirEnt->d_name);
 
-      if(stat(fullPath,&fileStat) < 0)
-        return;
+        if(stat(fullPath,&fileStat) < 0)
+          return;
 
-      totalSize += fileStat.st_size;
+        totalSize += fileStat.st_size;
 
-      if(lflag) {
-        print_file_details(fullPath);
-      } else {
-        char fileType = 'f';
-        if(pDirEnt->d_type == DT_DIR) {
-          fileType = 'd';
+        if(lflag) {
+          print_file_details(fullPath);
+        } else {
+          char fileType = 'f';
+          if(pDirEnt->d_type == DT_DIR) {
+            fileType = 'd';
+          }
+          print_name(pDirEnt->d_name, fileType);
+          if(sflag) {
+            printf(" %ld", fileStat.st_size / 1024); // Display file size in blocks
+          }
+          printf("  ");
         }
-        print_name(pDirEnt->d_name, fileType);
-        if(sflag) {
-          printf(" %ld", fileStat.st_size);
-        }
-        printf("  ");
-      }
 
-      if(Rflag && pDirEnt->d_type == DT_DIR) {
-        printf("\n");
-        list_directory(fullPath, lflag, Rflag, sflag);
+        if(Rflag && pDirEnt->d_type == DT_DIR) {
+          printf("\n");
+          list_directory(fullPath, lflag, Rflag, sflag, aflag);
+        }
       }
     }
 
@@ -114,7 +116,7 @@ void list_directory(char *dir_path, int lflag, int Rflag, int sflag) {
   }
   closedir( pDIR );
   if(sflag) {
-    printf("\ntotal %d\n", totalSize);
+    printf("\ntotal %d\n", totalSize / 1024); // Display total size in blocks
   }
   if(!Rflag) {
     printf("\n");
@@ -126,8 +128,9 @@ int main( int argc, char *argv[] ) {
   int lflag = 0;
   int Rflag = 0;
   int sflag = 0;
+  int aflag = 0;
 
-  while ((c = getopt (argc, argv, "lRs")) != -1)
+  while ((c = getopt (argc, argv, "lRsa")) != -1)
     switch (c)
     {
       case 'l':
@@ -139,11 +142,14 @@ int main( int argc, char *argv[] ) {
       case 's':
         sflag = 1;
         break;
+      case 'a':
+        aflag = 1;
+        break;
       default:
         abort ();
     }
 
-  list_directory(".", lflag, Rflag, sflag);
+  list_directory(".", lflag, Rflag, sflag, aflag);
 
   return 0;
 }
