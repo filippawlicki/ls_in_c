@@ -23,19 +23,19 @@ To make the script runnable from anywhere, follow these steps:
 1. Compile with tcc:
 
 ```bash
-tcc -run main.c -lRsai /path/to/directory
+tcc -o lc_c main.c
 ```
 
 2. Make sure your script is executable:
 
 ```bash
-chmod +x main.c
+chmod +x lc_c
 ```
 
 3. Move the script to a directory in your PATH, such as `/usr/local/bin`:
 
 ```bash
-sudo cp main.c /usr/local/bin/ls_c
+sudo cp lc_c /usr/local/bin/
 ```
 
 Now, you can run your script from anywhere using the following command:
