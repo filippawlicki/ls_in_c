@@ -8,15 +8,23 @@ This is a small project that implements a basic version of the `ls` command in C
 - `-a`: Do not ignore entries starting with `.`.
 - `-i`: Print the index number of each file.
 
-## Usage
+## Prerequisites
 
-To run the script in any directory, use the following command:
+Before you can run the script, you need to have the Tiny C Compiler (TCC) installed on your system. If you're using a Debian-based system like Ubuntu, you can install it using the following command:
 
 ```bash
-./main.c -lRsai /path/to/directory
+sudo apt-get install tcc
+
+## Usage
+
+To compile and run the script in any directory, use the following commands:
+
+```bash
+tcc -run main.c -lRsai /path/to/directory
 ```
 
 Replace `/path/to/directory` with the path to the directory you want to list. If no directory is specified, the script defaults to the current directory.
+
 
 ## Installation
 
