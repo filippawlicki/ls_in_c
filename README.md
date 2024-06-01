@@ -15,28 +15,24 @@ Before you can run the script, you need to have the Tiny C Compiler (TCC) instal
 ```bash
 sudo apt-get install tcc
 ```
-## Usage
-
-To compile and run the script in any directory, use the following commands:
-
-```bash
-tcc -run main.c -lRsai /path/to/directory
-```
-
-Replace `/path/to/directory` with the path to the directory you want to list. If no directory is specified, the script defaults to the current directory.
-
 
 ## Installation
 
 To make the script runnable from anywhere, follow these steps:
 
-1. Make sure your script is executable:
+1. Compile with tcc:
+
+```bash
+tcc -run main.c -lRsai /path/to/directory
+```
+
+2. Make sure your script is executable:
 
 ```bash
 chmod +x main.c
 ```
 
-2. Move the script to a directory in your PATH, such as `/usr/local/bin`:
+3. Move the script to a directory in your PATH, such as `/usr/local/bin`:
 
 ```bash
 sudo cp main.c /usr/local/bin/ls_c
