@@ -14,7 +14,7 @@ Before you can run the script, you need to have the Tiny C Compiler (TCC) instal
 
 ```bash
 sudo apt-get install tcc
-
+```
 ## Usage
 
 To compile and run the script in any directory, use the following commands:
